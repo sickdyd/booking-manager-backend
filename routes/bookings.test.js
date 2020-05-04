@@ -195,7 +195,7 @@ describe("api/bookings", () => {
         .send({ id: moment().unix(), user: mongoose.Types.ObjectId().toHexString() })
 
       let res = await exec(userToken, bookRes.body.id);
-      console.log(res.error.text)
+
       expect(res.status).toBe(401);
 
     });

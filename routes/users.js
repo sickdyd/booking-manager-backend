@@ -100,8 +100,6 @@ router.delete("/:id", [authorize, admin, validateObjectId], async (req, res) => 
 
 router.get("/:id/bookings", [authorize, validateObjectId], async (req, res) => {
 
-  console.log(req.user._id, req.params.id);
-
   if (!req.user.admin && (req.user._id !== req.params.id)) {
     return errorHandler(res, "UNAUTHORIZED");
   }

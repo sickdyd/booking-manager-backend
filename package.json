@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "jest": "^25.1.0",
-    "morgan": "^1.9.1",
+    "morgan": "^1.10.0",
     "supertest": "^4.0.2"
   },
   "scripts": {
