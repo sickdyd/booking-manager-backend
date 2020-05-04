@@ -1,6 +1,6 @@
 {
   "name": "Activity manager TEST",
-  "port": "4000",
+  "port": 4000,
   "db": "mongodb://localhost:27017/booking-manager-test",
   "jwtPrivateKey": "123",
   "env": "testing"

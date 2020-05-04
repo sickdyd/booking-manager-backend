@@ -1,5 +1,4 @@
 {
   "name": "Activity manager DEFAULT",
-  "port": "3333",
   "env": "development"
 }
