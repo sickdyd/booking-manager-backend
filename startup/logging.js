@@ -49,6 +49,7 @@ if (config.get("env") === "development") {
     colorize: true,
     prettyPrint: true
   }));
+
 }
 
 module.exports = logger;

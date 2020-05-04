@@ -1,4 +1,5 @@
 {
   "name": "Activity manager DEV",
-  "env": "development"
+  "env": "development",
+  "db": "mongodb://localhost:27017/booking-manager-test"
 }
