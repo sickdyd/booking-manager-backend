@@ -18,7 +18,7 @@ require("./startup/prod")(app);
 
 logger.info(config.get("name"));
 
-let port = config.get("port") || process.env.PORT || 3334;
+let port = process.env.PORT || config.get("port");
 if (process.env.NODE_ENV === "test") port = "1234";
 const server = app.listen(port, () => logger.info(`Listening on port ${port}.`));
 
