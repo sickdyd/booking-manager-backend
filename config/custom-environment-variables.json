@@ -1,0 +1,4 @@
+{
+  "jwtPrivateKey": "bookingManagerKey",
+  "db": "db"
+}
