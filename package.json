@@ -30,7 +30,11 @@
   },
   "scripts": {
     "ctest": "jest --verbose --runInBand --forceExit --coverage",
-    "test": "jest --watch-all --verbose --runInBand --forceExit"
+    "test": "jest --watch-all --verbose --runInBand --forceExit",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "10.16.0"
   },
   "author": "Roberto Josef Antonio Reale",
   "license": "MIT"
