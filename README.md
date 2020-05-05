@@ -22,51 +22,50 @@
 
   `POST`
 
-* **Data Params**
+**/api/bookings**
 
-  { email: "test@email.com", password: "testing123" }
+* **Method:**
 
-* **Success Response:**
+  `POST`
 
-  * **Code:** 200 <br />
-    **Content:** `{ token: "eyJhb...", fullName: "Name Surname" }`
+**/api/bookings/id**
 
-* **Sample Call:**
+* **Method:**
 
-    ```
-    axios
-      .post(this.endpoint, { email, password })
-      .then(res => console.log(res.data.token));
-    ```
+  `DELETE`
 
-**/api/users**
+**/api/bookings/close**
+
+* **Method:**
+
+  `POST`
+
+**/api/schedule**
 
 * **Method:**
 
   `GET`
 
-* **Headers**
+**/api/settings**
 
-  * **x-auth-token**
-  
-    The token is necessary for authentication and authorization. To get the token, login.
-    Only admins can access the resource.
+* **Method:**
 
-* **Success Response:**
+  `GET PUT`
 
-  * **Code:** 200 <br />
+**/api/users**
 
-    Returns an array containing the list of users.
+* **Method:**
 
-    **Content:** `[{ _id : 1, name: "Name", surname: "Surname", message: false, enabled: true }]`
- 
-* **Error Response:**
+  `GET POST`
 
-  * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "Access denied. No token provided." }`
-    **Content:** `{ error : "Not authorized." }`
+**/api/users/id**
 
-  OR
+* **Method:**
 
-  * **Code:** 400 BAD REQUEST <br />
-    **Content:** `{ error : "Invalid token." }`
+  `GET PUT PATCH DELETE`
+
+**/api/users/id/bookings**
+
+* **Method:**
+
+  `GET`
