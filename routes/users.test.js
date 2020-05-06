@@ -25,8 +25,8 @@ describe("/api/users", () => {
       email: "admin@admin.it",
       password: "testing123",
       admin: true,
-      disabled: false
-
+      disabled: false,
+      points: 0,
     }
 
     mockUser = {
@@ -35,7 +35,8 @@ describe("/api/users", () => {
       email: "user@user.it",
       password: "testing123",
       admin: false,
-      disabled: false
+      disabled: false,
+      points: 0,
     }
 
   });
@@ -243,6 +244,13 @@ describe("/api/users", () => {
       expect(res.body.error.type).toBe("string.max");
     });
 
+    it("should return an error if points is not number", async () => {
+      mockUser.points = "abc";
+      const res = await exec(getToken(mockAdmin), mockUser);
+      expect(res.status).toBe(400);
+      expect(res.body.error.type).toBe("number.base");
+    });
+
     // route errors
 
     it("should return an error if email is in use", async () => {
@@ -381,6 +389,13 @@ describe("/api/users", () => {
       expect(res.body.error.type).toBe("string.max");
     });
 
+    it("should return an error if points is not number", async () => {
+      mockUser.points = "abc";
+      const res = await exec(getToken(mockAdmin), mockUser, userId);
+      expect(res.status).toBe(400);
+      expect(res.body.error.type).toBe("number.base");
+    });
+
     // route errors
 
     it("should return an error if object id is valid but not found", async () => {
@@ -484,7 +499,7 @@ describe("/api/users", () => {
     });
 
     it("should return an error if password is less than 8 chars", async () => {
-      const res = await exec(getToken(mockAdmin), { password: 1234567 }, userId);
+      const res = await exec(getToken(mockAdmin), { password: "1234567" }, userId);
       expect(res.status).toBe(400);
       expect(res.body.error.type).toBe("string.min");
     });
@@ -493,6 +508,12 @@ describe("/api/users", () => {
       const res = await exec(getToken(mockAdmin), { password: Array(130).join("a") }, userId);
       expect(res.status).toBe(400);
       expect(res.body.error.type).toBe("string.max");
+    });
+
+    it("should return an error if points is not number", async () => {
+      const res = await exec(getToken(mockAdmin), { points: "abc" }, userId);
+      expect(res.status).toBe(400);
+      expect(res.body.error.type).toBe("number.base");
     });
 
     // happy paths

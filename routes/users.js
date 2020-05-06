@@ -16,8 +16,8 @@ const authorize = require("../middleware/authorize");
 const admin = require("../middleware/admin");
 const hasOnlyProperty = require("../utilities");
 
-const userReturnedFields = ["_id", "name", "surname", "email", "disabled", "admin"];
-const userValidationFields = ["name", "surname", "email", "password", "disabled", "admin"];
+const userReturnedFields = ["_id", "name", "surname", "email", "disabled", "admin", "points"];
+const userValidationFields = ["name", "surname", "email", "password", "disabled", "admin", "points"];
 
 router.get("/", [authorize, admin], async (req, res) => {
   const users = await User.find().sort("surname");
@@ -74,16 +74,20 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
     return errorHandler(res, "UNAUTHORIZED");
   }
 
-  // For each property sent in the request update the user property
-  for (let key in req.body) user[key] = req.body[key];
+  const tempUser = _.pick(user, userValidationFields);
 
-  const { error } = validateUser(_.pick(user, userValidationFields));
+  // For each property sent in the request update the user property
+  for (let key in req.body) tempUser[key] = req.body[key];
+
+  const { error } = validateUser(_.pick(tempUser, userValidationFields));
   if (error) return errorHandler(res, "VALIDATION_FAIL", error.details[0]);
   
   if (req.body.password) {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
   }
+
+  for (let key in tempUser) user[key] = tempUser[key];
 
   await user.save();
 

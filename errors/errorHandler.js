@@ -20,6 +20,7 @@ function errorHandler(res, name, data) {
     }
   } catch(err) {
     // console.log(err);
+    console.log("ex")
     throw new Error(err);
   }
 }

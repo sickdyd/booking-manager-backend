@@ -13,6 +13,7 @@ describe("user schema validation", () => {
       password: "12345678",
       admin: false,
       disabled: false,
+      points: 0,
     }
   });
 
@@ -140,6 +141,16 @@ describe("user schema validation", () => {
       const result = validateUser(mockUser);
       expect(result.error.details[0].type).toMatch(/boolean.base/);
     });
+  });
+
+  describe("points validation", () => {
+
+    it("should return an error if points is not a number", () => {
+      mockUser.points = "abc";
+      const result = validateUser(mockUser);
+      expect(result.error.details[0].type).toMatch(/number.base/);
+    });
+
   });
 
   it("should return no errors if input is valid", () => {

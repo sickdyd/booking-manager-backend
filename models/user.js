@@ -40,8 +40,11 @@ const userSchema = new mongoose.Schema({
   },
   disabled: {
     type: Boolean,
-    required: true,
     default: false
+  },
+  points: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -64,6 +67,7 @@ function validateUser(user) {
     password: Joi.string().min(8).max(128).required(),
     admin: Joi.boolean(),
     disabled: Joi.boolean(),
+    points: Joi.number(),
   });
   return schema.validate(user)
 }

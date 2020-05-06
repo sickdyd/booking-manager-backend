@@ -13,7 +13,7 @@ router.get("/", [authorize, admin], async (req, res) => {
 
 router.put("/", [authorize, admin, validate(validateSettings)], async (req, res) => {
 
-  const settings = await Settings.findOneAndUpdate({}, req.body, {new: true});
+  const settings = await Settings.findOneAndUpdate({}, req.body, { new: true });
   
   res.status(200).send(settings);
 });
