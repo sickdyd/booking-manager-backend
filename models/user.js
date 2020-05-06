@@ -48,9 +48,14 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.virtual("fullName").get(function () {
+userSchema.virtual("fullName").get(function() {
   return this.name + ' ' + this.surname;
 });
+
+userSchema.methods.changePoints = function(n) {
+  this.points += n;
+  return this.points;
+}
 
 userSchema.methods.generateAuthToken = function() {
   const token = jwt.sign({ _id: this._id, admin: this.admin, name: this.get("fullName") }, config.get("jwtPrivateKey"));

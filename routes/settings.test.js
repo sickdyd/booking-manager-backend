@@ -5,6 +5,7 @@ const { Settings } = require("../models/settings");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const mongoose = require("mongoose");
+const settings = require("../test-data/settings.json");
 
 describe("api/settings", () => {
 
@@ -81,58 +82,6 @@ describe("api/settings", () => {
   });
 
   describe("PUT /", () => {
-
-    const settings = {
-      "lastBookableDay": 1589209200,
-      "slotDuration": 50,
-      "interval": 10,
-      "expireOffset": 1440,
-      "cancelationNotice": 365,
-      "week": [
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        },
-        {
-          "startHours": 10,
-          "startMinutes": 0,
-          "slotNumber": 5,
-          "off": false
-        }
-      ]
-    }
 
     const exec = (token, settings) => request(server)
       .put("/api/settings/")

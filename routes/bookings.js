@@ -25,7 +25,8 @@ router.post("/", [authorize, validate(validateBooking)], async (req, res) => {
   const settings = new Settings();
   await settings.init();
 
-  if ((sameDayBookings.length >= settings.dailyLimit) && settings.dailyLimit !== 0) {
+  if ((sameDayBookings.length >= settings.dailyLimit) &&
+        settings.dailyLimit !== 0 && !req.body.admin) {
     return errorHandler(res, "BOOKING_LIMIT"); 
   }
 

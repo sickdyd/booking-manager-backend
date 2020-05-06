@@ -2,9 +2,11 @@
 const request = require("supertest");
 const { User } = require("../models/user");
 const { Booking } = require("../models/booking");
+const { Settings } = require("../models/settings");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const mongoose = require("mongoose");
+const settings = require("../test-data/settings.json");
 
 describe("api/bookings", () => {
 
@@ -98,6 +100,33 @@ describe("api/bookings", () => {
       let res = await exec(booking, userToken);
       res = await exec(booking, userToken);
       expect(res.status).toBe(410);
+
+    });
+
+    // booking limits
+
+    it("should return an error if the daily limit is hit", async () => {
+
+      await Settings.findOneAndUpdate({}, { dailyLimit: 2 });
+      
+      await Booking.insertMany([
+        {
+          id: moment("1983-11-28 10:00").unix(),
+          user: userId,
+          bookedAt: moment().unix(),
+        },
+        {
+          id: moment("1983-11-28 11:00").unix(),
+          user: userId,
+          bookedAt: moment().unix(),
+        }
+      ]);
+
+      const res = await exec({ id: moment("1983-11-28 12:00").unix(), user: userId }, userToken);
+
+      await Booking.deleteMany();
+
+      expect(res.status).toBe(400);
 
     });
 
