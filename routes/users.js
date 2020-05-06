@@ -79,6 +79,9 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
   // For each property sent in the request update the user property
   for (let key in req.body) tempUser[key] = req.body[key];
 
+  console.log(tempUser)
+  console.log(req.body)
+
   const { error } = validateUser(_.pick(tempUser, userValidationFields));
   if (error) return errorHandler(res, "VALIDATION_FAIL", error.details[0]);
   
@@ -88,6 +91,7 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
   }
 
   for (let key in tempUser) user[key] = tempUser[key];
+
 
   await user.save();
 

@@ -14,6 +14,7 @@ class Config {
     this.expireOffset = settings.expireOffset;
     this.cancelationNotice = settings.cancelationNotice;
     this.week = settings.week;
+    this.dailyLimit = settings.dailyLimit;
   }
 }
 
@@ -28,6 +29,7 @@ async function createDefaultConfig() {
       interval: 10,
       expireOffset: 60,
       cancelationNotice: 24,
+      dailyLimit: 0,
       week: [...new Array(7)].map(() =>
         ({ startHours: 10, startMinutes: 0, slotNumber: 5, off: false }))
     });

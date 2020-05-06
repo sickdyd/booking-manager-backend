@@ -3,6 +3,7 @@ function errorHandler(res, name, data) {
     switch (name) {
       // 400
       case "BOOKING_INEXISTANT": return res.status(400).send({ error: { message: "This booking does not exist." }});
+      case "BOOKING_LIMIT": return res.status(400).send({ error: { message: "You can't book more lessons for today." }});
       case "VALIDATION_FAIL": return res.status(400).send({ error: { path: data.path[0], type: data.type, message: data.message }});
       case "INVALID_CREDENTIALS": return res.status(400).send({ error: { message: "Invalid email or password." }});
       case "EMAIL_IN_USE": return res.status(400).send({ error: { message: "The email provided is already in use." }});

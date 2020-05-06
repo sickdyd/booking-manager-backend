@@ -43,7 +43,7 @@ describe("api/settings", () => {
   });
 
   afterEach(async () => {
-    // await Settings.deleteMany();
+    await Settings.deleteMany();
     await User.deleteMany();
   });
 

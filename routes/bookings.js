@@ -3,26 +3,31 @@ const router = require("express").Router();
 const moment = require("moment");
 const authorize = require("../middleware/authorize");
 const { Booking, validateBooking } = require("../models/booking");
+const { User } = require("../models/user");
 const admin = require("../middleware/admin");
 const validate = require("../middleware/validate");
 const errorHandler = require("../errors/errorHandler");
-
-router.get("/:id", [authorize, validateObjectId], async (req, res) => {
-
-  if (!req.user.admin && (req.user._id !== req.params.id)) {
-    return errorHandler(res, "UNAUTHORIZED");
-  }
-
-  let bookings = await Booking.find({ user: req.params.id });
-  if (!bookings) return res.status(204).send([]);
-
-  res.status(200).send(bookings);
-});
+const Settings = require("../classes/settings");
 
 router.post("/", [authorize, validate(validateBooking)], async (req, res) => {
 
+  // id is the unix epoch time
   let booking = await Booking.exists({ id: req.body.id });
   if (booking) return errorHandler(res, "BOOKING_UNAVAILABLE");
+
+  const startOfDay = moment.unix(req.body.id).startOf("day");
+  const endOfDay = moment.unix(req.body.id).endOf("day");
+
+  let sameDayBookings = await Booking
+    .find({ user: req.user._id })
+    .where("id").gt(startOfDay.unix()).lt(endOfDay.unix())
+
+  const settings = new Settings();
+  await settings.init();
+
+  if ((sameDayBookings.length >= settings.dailyLimit) && settings.dailyLimit !== 0) {
+    return errorHandler(res, "BOOKING_LIMIT"); 
+  }
 
   req.body.bookedAt = moment().unix();
 

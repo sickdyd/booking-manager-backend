@@ -66,11 +66,16 @@ const settingsSchema = mongoose.Schema({
     min: 0,
     required: true
   },
+  dailyLimit: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
   week: {
     type: [daySchema],
     validate: [arrayLimit, "The weekdays can only be 7."],
     required: true
-  }
+  },
 })
 
 function arrayLimit(val) {
@@ -86,6 +91,7 @@ function validateSettings(settings) {
     interval: Joi.number().min(0).max(240).required(),
     expireOffset: Joi.number().min(0).max(60 * 60 * 24).required(),
     cancelationNotice: Joi.number().integer().min(0).required(),
+    dailyLimit: Joi.number().min(0),
     week: Joi.required(),
   });
   return schema.validate(settings)

@@ -36,7 +36,7 @@ const generateSchedule = async (userId, admin) => {
         return { ...slot, start: start.format("HH:mm"), status: "closed" };
       } else {
         if (userId == slot.user._id) {
-          if (isAfter(start, cancelationNotice)) {
+          if (isAfter(start, (cancelationNotice * 60))) {
             return { ...slot, start: start.format("HH:mm"), status: "booked" };
           } else {
             return { ...slot, start: start.format("HH:mm"), status: "bookedUncancellable" };
@@ -47,7 +47,11 @@ const generateSchedule = async (userId, admin) => {
       }
     } else {
       if (isAfter(start, expireOffset)) {
-        return { id, start: start.format("HH:mm"), status: "available", user: null };
+        if (isAfter(start, (cancelationNotice * 60))) {
+          return { id, start: start.format("HH:mm"), status: "available", user: null };
+        } else {
+          return { id, start: start.format("HH:mm"), status: "availableUncancellable", user: null };
+        }
       } else {
         return { id, start: start.format("HH:mm"), status: "unavailable", user: null };
       }

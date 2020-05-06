@@ -1,5 +1,6 @@
 {
   "name": "Activity manager DEFAULT",
   "env": "development",
-  "port": "3333"
+  "port": "3333",
+  "db": "mongodb://localhost:27017/booking-manager"
 }
