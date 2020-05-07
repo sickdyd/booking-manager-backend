@@ -87,8 +87,6 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
     tempUser.password = await bcrypt.hash(tempUser.password, salt);
   }
 
-  console.log(tempUser)
-  console.log(req.body)
 
   for (let key in tempUser) user[key] = tempUser[key];
 
@@ -115,6 +113,18 @@ router.get("/:id/bookings", [authorize, validateObjectId], async (req, res) => {
   if (!bookings) return res.status(204).send([]);
 
   res.status(200).send(bookings);
+});
+
+router.get("/:id/points", [authorize, validateObjectId], async (req, res) => {
+
+  if (!req.user.admin && (req.user._id !== req.params.id)) {
+    return errorHandler(res, "UNAUTHORIZED");
+  }
+
+  let user = await User.findById(req.params.id);
+  if (!user) return res.status(204).send({ points: 0 });
+
+  res.status(200).send({ points: user.points });
 });
 
 module.exports = router;

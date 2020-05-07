@@ -8,12 +8,12 @@ async function dailyLimit(req, res, next) {
 
   if (!req.user.admin) {
 
-    const startOfDay = moment.unix(req.body.id).startOf("day");
-    const endOfDay = moment.unix(req.body.id).endOf("day");
+    const startOfDay = moment.unix(req.body.unix).startOf("day");
+    const endOfDay = moment.unix(req.body.unix).endOf("day");
 
     let sameDayBookings = await Booking
       .find({ user: req.user._id })
-      .where("id").gt(startOfDay.unix()).lt(endOfDay.unix())
+      .where("unix").gt(startOfDay.unix()).lt(endOfDay.unix())
 
     const settings = new Settings();
     await settings.init();

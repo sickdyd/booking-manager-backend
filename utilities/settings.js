@@ -17,7 +17,7 @@ async function createSettings() {
       interval: 10,
       expireOffset: 60,
       cancelationNotice: 24,
-      dailyLimit: 0,
+      dailyLimit: 2,
       week: [...new Array(7)].map(() =>
         ({ startHours: 10, startMinutes: 0, slotNumber: 5, off: false }))
     });

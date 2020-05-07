@@ -13,8 +13,6 @@ router.get("/", [authorize, admin], async (req, res) => {
 
 router.put("/", [authorize, admin, validate(validateSettings)], async (req, res) => {
 
-  console.log(req.body)
-
   const settings = await Settings.findOneAndUpdate({}, req.body, { new: true });
   
   res.status(200).send(settings);

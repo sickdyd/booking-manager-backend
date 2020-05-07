@@ -19,7 +19,7 @@ const generateSchedule = async (userId, admin) => {
   } = settings;
 
   const fields = admin ? "name surname email _id" : "_id"
-  const bookings = await Booking.find().select("id user bookedAt -_id").populate("user", fields).lean();
+  const bookings = await Booking.find().select("unix user bookedAt -_id").populate("user", fields).lean();
 
   const isAfter = (start, offset) => {
     let expiration = moment();
@@ -27,9 +27,9 @@ const generateSchedule = async (userId, admin) => {
     return !start.isBefore(expiration);
   }
 
-  const userSlot = (id, userId) => {
+  const userSlot = (unix, userId) => {
 
-    const slot = bookings.find(slot => slot.id === id);
+    const slot = bookings.find(slot => slot.unix === unix);
 
     if (slot) {
       if (slot.user === null) {
@@ -42,26 +42,26 @@ const generateSchedule = async (userId, admin) => {
             return { ...slot, start: start.format("HH:mm"), status: "bookedUncancellable" };
           }
         } else {
-          return { id, start: start.format("HH:mm"), status: "unavailable", user: null };    
+          return { unix, start: start.format("HH:mm"), status: "unavailable", user: null };    
         }
       }
     } else {
       if (isAfter(start, expireOffset)) {
         if (isAfter(start, (cancelationNotice * 60))) {
-          return { id, start: start.format("HH:mm"), status: "available", user: null };
+          return { unix, start: start.format("HH:mm"), status: "available", user: null };
         } else {
-          return { id, start: start.format("HH:mm"), status: "availableUncancellable", user: null };
+          return { unix, start: start.format("HH:mm"), status: "availableUncancellable", user: null };
         }
       } else {
-        return { id, start: start.format("HH:mm"), status: "unavailable", user: null };
+        return { unix, start: start.format("HH:mm"), status: "unavailable", user: null };
       }
     }
 
   }
 
-  const adminSlot = (id) => {
+  const adminSlot = (unix) => {
 
-    const slot = bookings.find(slot => slot.id === id);
+    const slot = bookings.find(slot => slot.unix === unix);
 
     if (slot) {
       if (slot.user === null) {
@@ -74,7 +74,7 @@ const generateSchedule = async (userId, admin) => {
         }
       }
     } else {
-      return { id, start: start.format("HH:mm"), status: "available", user: null };
+      return { unix, start: start.format("HH:mm"), status: "available", user: null };
     }
 
   }
@@ -94,12 +94,12 @@ const generateSchedule = async (userId, admin) => {
   
     for (let i = 1; i <= slotNumber; i++) {
 
-      const id = start.unix();
+      const unix = start.unix();
 
       if (admin) {
-        slots.push(adminSlot(id))
+        slots.push(adminSlot(unix))
       } else {
-        slots.push(userSlot(id, userId))
+        slots.push(userSlot(unix, userId))
       }
 
       start.add(slotDuration + interval, "minutes");

@@ -5,7 +5,7 @@ const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
 const bookingSchema = mongoose.Schema({
-  id: {
+  unix: {
     type: Number,
     required: true,
     unique: true,
@@ -28,7 +28,7 @@ const Booking = mongoose.model("Booking", bookingSchema);
 
 function validateBooking(booking) {
   const schema = Joi.object({
-    id: Joi.number().required(),
+    unix: Joi.number().required(),
     user: Joi.objectId().required()
   });
   return schema.validate(booking)

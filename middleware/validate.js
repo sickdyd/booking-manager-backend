@@ -7,6 +7,7 @@ const errorHandler = require("../errors/errorHandler");
 
 module.exports = (validator) => {
   return (req, res, next) => {
+
     const { error } = validator(req.body);
     if (error) return errorHandler(res, "VALIDATION_FAIL", error.details[0])
     next();

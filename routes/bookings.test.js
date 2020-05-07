@@ -16,11 +16,11 @@ describe("api/bookings", () => {
   let userId;
 
   const booking = {
-    id: moment().unix(),
+    unix: moment().unix(),
     user: mongoose.Types.ObjectId().toHexString(),
   }
 
-  beforeAll(async () => {
+  beforeEach(async () => {
 
     server = require("../index");
 
@@ -32,6 +32,7 @@ describe("api/bookings", () => {
       surname: "test",
       email: "test@test.it",
       password: password,
+      points: 4,
       admin: true,
       disabled: false,
     }
@@ -79,16 +80,16 @@ describe("api/bookings", () => {
 
     // validation
 
-    it("should return an error if id is not provided", async () => {
+    it("should return an error if unix is not provided", async () => {
 
-      const res = await exec({ id: null }, userToken);
+      const res = await exec({ ...booking, unix: null }, userToken);
       expect(res.status).toBe(400);
 
     });
 
     it("should return an error if user is not provided", async () => {
 
-      const res = await exec({ user: null }, userToken);
+      const res = await exec({ ...booking, user: null }, userToken);
       expect(res.status).toBe(400);
 
     });
@@ -111,18 +112,18 @@ describe("api/bookings", () => {
       
       await Booking.insertMany([
         {
-          id: moment("1983-11-28 10:00").unix(),
+          unix: moment("1983-11-28 10:00").unix(),
           user: userId,
           bookedAt: moment().unix(),
         },
         {
-          id: moment("1983-11-28 11:00").unix(),
+          unix: moment("1983-11-28 11:00").unix(),
           user: userId,
           bookedAt: moment().unix(),
         }
       ]);
 
-      const res = await exec({ id: moment("1983-11-28 12:00").unix(), user: userId }, userToken);
+      const res = await exec({ unix: moment("1983-11-28 12:00").unix(), user: userId }, userToken);
 
       await Booking.deleteMany();
 
@@ -189,8 +190,8 @@ describe("api/bookings", () => {
 
   describe("DELETE", () => {
 
-    const exec = (token, id) => request(server)
-      .delete("/api/bookings/" + id)
+    const exec = (token, unix) => request(server)
+      .delete("/api/bookings/" + unix)
       .set("x-auth-token", token)
 
     const createBooking = (booking, token) => request(server)
@@ -221,9 +222,9 @@ describe("api/bookings", () => {
       const bookRes = await request(server)
         .post("/api/bookings/")
         .set("x-auth-token", userToken)
-        .send({ id: moment().unix(), user: mongoose.Types.ObjectId().toHexString() })
+        .send({ unix: moment().unix(), user: mongoose.Types.ObjectId().toHexString() })
 
-      let res = await exec(userToken, bookRes.body.id);
+      let res = await exec(userToken, bookRes.body.unix);
 
       expect(res.status).toBe(401);
 
@@ -232,7 +233,7 @@ describe("api/bookings", () => {
     it("should return an error if trying to delete another user slot", async () => {
 
       const bookRes = await createBooking(booking, userToken);
-      let res = await exec(userToken, bookRes.body.id);
+      let res = await exec(userToken, bookRes.body.unix);
       expect(res.status).toBe(401);
 
     });
@@ -240,7 +241,7 @@ describe("api/bookings", () => {
     it("should delete the user's booking", async () => {
 
       const bookRes = await createBooking({ ...booking, user: userId }, userToken);
-      let res = await exec(userToken, bookRes.body.id);
+      let res = await exec(userToken, bookRes.body.unix);
       expect(res.status).toBe(200);
 
     });
@@ -248,7 +249,7 @@ describe("api/bookings", () => {
     it("should delete a booking if admin", async () => {
 
       const bookRes = await createBooking(booking, userToken);
-      let res = await exec(adminToken, bookRes.body.id);
+      let res = await exec(adminToken, bookRes.body.unix);
       expect(res.status).toBe(200);
 
     });

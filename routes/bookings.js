@@ -11,8 +11,7 @@ const errorHandler = require("../errors/errorHandler");
 
 router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req, res) => {
 
-  // id is the unix epoch time
-  let booking = await Booking.exists({ id: req.body.id });
+  let booking = await Booking.exists({ unix: req.body.unix });
   if (booking) return errorHandler(res, "BOOKING_UNAVAILABLE");
 
   req.body.bookedAt = moment().unix();
@@ -27,7 +26,7 @@ router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req,
 
 router.post("/close", [authorize, admin], async (req, res) => {
 
-  let booking = await Booking.exists({ id: req.body.id });
+  let booking = await Booking.exists({ unix: req.body.unix });
   if (booking) return errorHandler(res, "BOOKING_UNAVAILABLE");
 
   req.body.bookedAt = moment().unix();
@@ -40,9 +39,9 @@ router.post("/close", [authorize, admin], async (req, res) => {
   res.status(200).send(booking);
 });
 
-router.delete("/:id", [authorize], async (req, res) => {
+router.delete("/:unix", [authorize], async (req, res) => {
 
-  const booking = await Booking.findOne({ id: req.params.id });
+  const booking = await Booking.findOne({ unix: req.params.unix });
   if (!booking) return errorHandler(res, "BOOKING_INEXISTANT");
 
   let userId;
@@ -59,7 +58,7 @@ router.delete("/:id", [authorize], async (req, res) => {
 
   await points(req, res, 1);
 
-  await Booking.deleteOne({ id: req.params.id });
+  await Booking.deleteOne({ unix: req.params.unix });
 
   res.status(200).send(booking);
 });
