@@ -14,6 +14,8 @@ const validate = require("../middleware/validate");
 
 router.post("/", validate(validateAuthentication), async (req, res) => {
 
+  console.log(req.body)
+
   const user = await User.findOne({ email: req.body.email });
   if (!user) return errorHandler(res, "INVALID_CREDENTIALS");
   if (user.disabled) return errorHandler(res, "USER_DISABLED");

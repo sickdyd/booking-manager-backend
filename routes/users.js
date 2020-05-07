@@ -79,19 +79,18 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
   // For each property sent in the request update the user property
   for (let key in req.body) tempUser[key] = req.body[key];
 
-  console.log(tempUser)
-  console.log(req.body)
-
   const { error } = validateUser(_.pick(tempUser, userValidationFields));
   if (error) return errorHandler(res, "VALIDATION_FAIL", error.details[0]);
   
   if (req.body.password) {
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+    tempUser.password = await bcrypt.hash(tempUser.password, salt);
   }
 
-  for (let key in tempUser) user[key] = tempUser[key];
+  console.log(tempUser)
+  console.log(req.body)
 
+  for (let key in tempUser) user[key] = tempUser[key];
 
   await user.save();
 
