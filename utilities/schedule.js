@@ -4,6 +4,55 @@ require("moment/locale/ja");
 const { Booking } = require("../models/booking");
 const Settings = require("../classes/settings");
 
+const generateDaySlots = async() => {
+
+  const settings = new Settings();
+  await settings.init();
+
+  const {
+    slotDuration,
+    interval,
+    week
+  } = settings;
+
+  let start = moment("2020-05-02 00:00").startOf("day");
+
+  console.log(start);
+  const weekSlots = [];
+
+  for (let day = 0; day < 7; day++) {
+
+    const {
+      startHours,
+      startMinutes,
+      slotNumber,
+    } = week[day];
+  
+    start.set({ hours: startHours, minutes: startMinutes, millisecond: 0 });
+
+    const slots = [];
+  
+    for (let i = 1; i <= slotNumber; i++) {
+  
+      const unix = start.unix();
+      slots.push({ unix, value: start.format("HH:mm") });
+      start.add(slotDuration + interval, "minutes");
+    }
+    
+    weekSlots.push(slots);
+
+    start.add(1, "days");
+
+  }
+
+  console.log(weekSlots);
+
+  return weekSlots;
+
+}
+
+generateDaySlots();
+
 const generateSchedule = async (userId, admin) => {
 
   const settings = new Settings();
@@ -134,3 +183,4 @@ const generateSchedule = async (userId, admin) => {
 }
 
 module.exports.generateSchedule = generateSchedule;
+module.exports.generateDaySlots = generateDaySlots;

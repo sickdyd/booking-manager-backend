@@ -24,6 +24,29 @@ router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req,
   res.status(200).send(booking);
 });
 
+router.post("/batch", [authorize], async (req, res) => {
+
+  if (typeof req.body.bookings === Array) {
+
+    Booking.find({ unix: { $in: req.body.map(booking => booking.unix) } });
+    if (booking.length > 0) return errorHandler(res, "BOOKING_UNAVAILABLE");
+
+    const bookedAt = moment().unix();
+
+    const bookings = await Booking.insertMany(req.body.bookings.map(booking => ({
+        unix: booking.unix,
+        user: req.body.user,
+        bookedAt
+      })));
+
+    return res.status(200).send(bookings);
+
+  }
+
+  return errorHandler(res, "INVALID_REQUEST");
+
+});
+
 router.post("/close", [authorize, admin], async (req, res) => {
 
   let booking = await Booking.exists({ unix: req.body.unix });
@@ -59,7 +82,6 @@ router.delete("/:unix", [authorize], async (req, res) => {
   await points(req, res, 1);
 
   await Booking.deleteOne({ unix: req.params.unix });
-
   res.status(200).send(booking);
 });
 
