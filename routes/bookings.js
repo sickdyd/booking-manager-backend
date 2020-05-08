@@ -27,7 +27,27 @@ router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req,
 
 router.post("/batch", [authorize], async (req, res) => {
 
-  batchBooking(req, res);
+  const bookings = batchBooking(req);
+
+  // Validate each booking
+  bookings.forEach(booking => {
+    const { error } = validateBooking(booking);
+    if (error) return errorHandler(res, "VALIDATION_FAIL", error.details[0])
+  });
+
+  const existingBookings = await Booking.find({ unix: { $in: bookings.map(booking => booking.unix) } });
+  if (existingBookings.length > 0) return errorHandler(res, "BOOKING_UNAVAILABLE_SOME");
+
+  const bookedAt = moment().unix();
+
+  await Booking.insertMany(
+    bookings.map(booking => ({
+      ...booking,
+      bookedAt
+    }))  
+  );
+
+  res.status(200).send();
 
 });
 

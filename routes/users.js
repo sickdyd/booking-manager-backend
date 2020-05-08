@@ -109,7 +109,7 @@ router.get("/:id/bookings", [authorize, validateObjectId], async (req, res) => {
     return errorHandler(res, "UNAUTHORIZED");
   }
 
-  let bookings = await Booking.find({ user: req.params.id });
+  let bookings = await Booking.find({ user: req.params.id }).sort("unix");
   if (!bookings) return res.status(204).send([]);
 
   res.status(200).send(bookings);
