@@ -17,7 +17,8 @@ router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req,
 
   req.body.bookedAt = moment().unix();
 
-  await points(req, res, -1);
+  const enoughPoints = await points(req, res, -1);
+  if (!enoughPoints) return errorHandler(res, "NO_POINTS");
 
   booking = new Booking(req.body);
   await booking.save();
