@@ -8,6 +8,7 @@ const { Booking, validateBooking } = require("../models/booking");
 const admin = require("../middleware/admin");
 const validate = require("../middleware/validate");
 const errorHandler = require("../errors/errorHandler");
+const batchBooking = require("../utilities/batchBooking");
 
 router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req, res) => {
 
@@ -26,30 +27,13 @@ router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req,
 
 router.post("/batch", [authorize], async (req, res) => {
 
-  if (typeof req.body.bookings === Array) {
-
-    Booking.find({ unix: { $in: req.body.map(booking => booking.unix) } });
-    if (booking.length > 0) return errorHandler(res, "BOOKING_UNAVAILABLE");
-
-    const bookedAt = moment().unix();
-
-    const bookings = await Booking.insertMany(req.body.bookings.map(booking => ({
-        unix: booking.unix,
-        user: req.body.user,
-        bookedAt
-      })));
-
-    return res.status(200).send(bookings);
-
-  }
-
-  return errorHandler(res, "INVALID_REQUEST");
+  batchBooking(req, res);
 
 });
 
 router.post("/close", [authorize, admin], async (req, res) => {
 
-  let booking = await Booking.exists({ unix: req.body.unix });
+  let booking = await Booking.exists({ unix: req.body.unix }); 
   if (booking) return errorHandler(res, "BOOKING_UNAVAILABLE");
 
   req.body.bookedAt = moment().unix();

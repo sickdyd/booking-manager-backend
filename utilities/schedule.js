@@ -17,7 +17,6 @@ const generateDaySlots = async() => {
 
   let start = moment("2020-05-02 00:00").startOf("day");
 
-  console.log(start);
   const weekSlots = [];
 
   for (let day = 0; day < 7; day++) {
@@ -44,8 +43,6 @@ const generateDaySlots = async() => {
     start.add(1, "days");
 
   }
-
-  console.log(weekSlots);
 
   return weekSlots;
 
