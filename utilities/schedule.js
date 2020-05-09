@@ -1,6 +1,6 @@
 "use strict";
 const moment = require("moment");
-require("moment/locale/ja");
+// require("moment/locale/ja");
 const { Booking } = require("../models/booking");
 const Settings = require("../classes/settings");
 

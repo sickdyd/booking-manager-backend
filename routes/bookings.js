@@ -10,6 +10,13 @@ const validate = require("../middleware/validate");
 const errorHandler = require("../errors/errorHandler");
 const batchBooking = require("../utilities/batchBooking");
 
+router.get("/", [authorize, admin], async (req, res) => {
+
+  const bookings = await Booking.find().populate("user", "name surname email _id");
+  res.status(200).send(bookings);
+
+});
+
 router.post("/", [authorize, dailyLimit, validate(validateBooking)], async (req, res) => {
 
   let booking = await Booking.exists({ unix: req.body.unix });

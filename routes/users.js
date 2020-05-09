@@ -87,9 +87,7 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
     tempUser.password = await bcrypt.hash(tempUser.password, salt);
   }
 
-
   for (let key in tempUser) user[key] = tempUser[key];
-
   await user.save();
 
   return res.status(200).send(_.pick(user, userReturnedFields));
@@ -99,6 +97,8 @@ router.delete("/:id", [authorize, admin, validateObjectId], async (req, res) => 
 
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
+
+  const bookings = await Booking.deleteMany({ user: req.params.id });
 
   return res.status(200).send(_.pick(user, userReturnedFields));
 });
