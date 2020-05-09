@@ -15,6 +15,7 @@ const generateDaySlots = async() => {
     week
   } = settings;
 
+  // Get a Sunday as a reference
   let start = moment("2020-05-02 00:00").startOf("day");
 
   const weekSlots = [];
@@ -47,8 +48,6 @@ const generateDaySlots = async() => {
   return weekSlots;
 
 }
-
-generateDaySlots();
 
 const generateSchedule = async (userId, admin) => {
 
@@ -156,7 +155,15 @@ const generateSchedule = async (userId, admin) => {
   const schedule = [];
 
   let start = moment().startOf("day");
-  const end = moment.unix(lastBookableDay);
+
+  let end = moment.unix(lastBookableDay);
+
+  if (admin) {
+    let lastBooking = await Booking.findOne().sort("-unix");
+    lastBooking = moment.unix(lastBooking.unix);
+    if (end.isBefore(lastBooking)) end = lastBooking;
+  }
+
   const dur = moment.duration({ from: start, to: end });
   const days = Math.ceil(dur.asDays());
 
