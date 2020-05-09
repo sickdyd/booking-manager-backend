@@ -16,6 +16,7 @@ router.get("/", [authorize, admin], async (req, res) => {
     .where("user")
     .ne(null)
     .populate("user", "name surname email _id");
+    
   res.status(200).send(bookings);
 
 });
