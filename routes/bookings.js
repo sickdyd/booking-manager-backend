@@ -12,7 +12,10 @@ const batchBooking = require("../utilities/batchBooking");
 
 router.get("/", [authorize, admin], async (req, res) => {
 
-  const bookings = await Booking.find().populate("user", "name surname email _id");
+  const bookings = await Booking.find()
+    .where("user")
+    .ne(null)
+    .populate("user", "name surname email _id");
   res.status(200).send(bookings);
 
 });

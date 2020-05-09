@@ -158,6 +158,7 @@ const generateSchedule = async (userId, admin) => {
 
   let end = moment.unix(lastBookableDay);
 
+  // Extend the visible schedule to the last booking
   if (admin) {
     let lastBooking = await Booking.findOne().sort("-unix");
     lastBooking = moment.unix(lastBooking.unix);
