@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const Joi = require("@hapi/joi");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const moment = require("moment");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -48,17 +49,14 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.virtual("fullName").get(function() {
-  return this.name + ' ' + this.surname;
-});
-
 userSchema.methods.changePoints = function(n) {
   this.points += n;
   return this.points;
 }
 
 userSchema.methods.generateAuthToken = function() {
-  const token = jwt.sign({ _id: this._id, admin: this.admin, name: this.get("fullName") }, config.get("jwtPrivateKey"));
+  const exp = moment().add(15, "minutes").unix();
+  const token = jwt.sign({ _id: this._id, admin: this.admin, exp }, config.get("jwtPrivateKey"));
   return token;
 }
 

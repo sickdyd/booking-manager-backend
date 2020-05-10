@@ -1,5 +1,6 @@
 "use strict";
 const jwt = require("jsonwebtoken");
+const moment = require("moment");
 const config = require("config");
 const errorHandler = require("../errors/errorHandler")
 
@@ -15,7 +16,15 @@ function authorize(req, res, next) {
   
   try {
     const decoded = jwt.verify(token, config.get("jwtPrivateKey"));
+
+    console.log(decoded);
+
+    if (decoded.exp > moment.unix()) {
+      return errorHandler(res, "INVALID_TOKEN");
+    }
+
     req.user = decoded;
+
     next();
   }
   catch(ex) {

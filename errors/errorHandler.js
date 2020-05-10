@@ -9,8 +9,8 @@ function errorHandler(res, name, data) {
       case "VALIDATION_FAIL": return res.status(400).send({ error: { path: data.path[0], type: data.type, message: data.message }});
       case "INVALID_CREDENTIALS": return res.status(400).send({ error: { message: "Invalid email or password." }});
       case "EMAIL_IN_USE": return res.status(400).send({ error: { message: "The email provided is already in use." }});
-      case "INVALID_TOKEN": return res.status(400).send({ error: { message: "Invalid token." }});
       // 401
+      case "INVALID_TOKEN": return res.status(401).send({ error: { message: "Invalid token." }});
       case "USER_DISABLED": return res.status(401).send({ error: { message: "Your account has been disabled." }});
       case "NO_TOKEN": return res.status(401).send({ error: { message: "Access denied. No token provided." }});
       case "UNAUTHORIZED": return res.status(401).send({ error: { message: "You are not authorized to perform this action." }});
