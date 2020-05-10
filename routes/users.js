@@ -8,6 +8,7 @@ const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const errorHandler = require("../errors/errorHandler");
+const moment = require("moment");
 const { User, validateUser } = require("../models/user");
 const { Booking } = require("../models/booking");
 const validate = require("../middleware/validate");
@@ -69,7 +70,8 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
-  if (user.points !== req.body.verifyPoints) {
+  // The patch can be done for the password too, so ignore points if changing password
+  if ((user.points !== req.body.verifyPoints) && (!hasOnlyProperty(req.body, "password"))) {
     return errorHandler(res, "USER_POINTS_CHANGED");
   }
 
@@ -102,7 +104,7 @@ router.delete("/:id", [authorize, admin, validateObjectId], async (req, res) => 
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
-  const bookings = await Booking.deleteMany({ user: req.params.id });
+  bookings = await Booking.deleteMany({ user: req.params.id });
 
   return res.status(200).send(_.pick(user, userReturnedFields));
 });

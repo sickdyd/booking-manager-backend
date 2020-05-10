@@ -18,7 +18,7 @@ function errorHandler(res, name, data) {
       case "USER_NOT_FOUND": return res.status(404).send({ error: { message: "User not found." }});
       case "INVALID_OBJECT_ID": return res.status(404).send({ error: { message: "The ID is not valid." }});
       // 410
-      case "USER_POINTS_CHANGED": return res.status(410).send({ error: { message: "The user points changed, check and resubmit form." }});
+      case "USER_POINTS_CHANGED": return res.status(410).send({ error: { message: "The form is correct, but the user used some points while you were editing. Please check and resubmit." }});
       case "BOOKING_UNAVAILABLE": return res.status(410).send({ error: { message: "The slot is not available." }});
       case "BOOKING_UNAVAILABLE_SOME": return res.status(410).send({ error: { message: "One or more of the selected slots are booked or closed." }});
       default: return res.status(500).send({ error: { message: "Something on the server failed." }});
