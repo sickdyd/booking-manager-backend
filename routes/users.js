@@ -104,7 +104,7 @@ router.delete("/:id", [authorize, admin, validateObjectId], async (req, res) => 
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
-  bookings = await Booking.deleteMany({ user: req.params.id });
+  const bookings = await Booking.deleteMany({ user: req.params.id });
 
   return res.status(200).send(_.pick(user, userReturnedFields));
 });
