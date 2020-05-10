@@ -6,8 +6,19 @@ require("../utilities/settings");
 
 router.get("/", authorize, async (req, res) => {
 
+  const page = parseInt(req.query.page) || 1;
+  const perPage = parseInt(req.query.perPage) || 10;
+  
+  const from = (page - 1) * perPage;
+  const to = page * perPage;
+
   const schedule = await generateSchedule(req.user._id, req.user.admin);
-  res.status(200).send(schedule);
+
+  res.status(200).send({
+    schedule: schedule.slice(from, to),
+    totalItems: schedule.length
+  });
+  
 });
 
 router.get("/slots", authorize, async (req, res) => {

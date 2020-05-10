@@ -166,9 +166,9 @@ const generateSchedule = async (userId, admin) => {
   }
 
   const dur = moment.duration({ from: start, to: end });
-  const days = Math.ceil(dur.asDays());
+  const totalDays = Math.ceil(dur.asDays());
 
-  for (let i = 0; i <= days; i++) {
+  for (let i = 0; i <= totalDays; i++) {
 
     const slots = await generateSlots(start, userId);
 
