@@ -69,6 +69,10 @@ router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
+  if (user.points !== req.body.verifyPoints) {
+    return errorHandler(res, "USER_POINTS_CHANGED");
+  }
+
   if ((!req.user.admin && !hasOnlyProperty(req.body, "password")) ||
       (!req.user.admin && (req.params.id !== req.user._id))) {
     return errorHandler(res, "UNAUTHORIZED");
