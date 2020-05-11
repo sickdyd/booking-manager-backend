@@ -25,7 +25,7 @@ async function authorize(req, res, next) {
     req.user = decoded;
 
     const user = await User.findById(decoded._id);
-    if (!user) return errorHandler(res, "UNAUTHORIZED");
+    if (!user || user.disabled) return errorHandler(res, "UNAUTHORIZED");
     const newToken = user.generateAuthToken();
 
     res.set("Access-Control-Expose-Headers", "x-auth-token");
