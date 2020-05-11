@@ -154,7 +154,7 @@ const generateSchedule = async (userId, admin) => {
     
   const schedule = [];
 
-  let start = moment().startOf("day");
+  let start = moment().startOf("week");
 
   let end = moment.unix(lastBookableDay);
 
