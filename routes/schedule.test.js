@@ -21,11 +21,16 @@ describe("routes/schedule.js", () => {
 
     let user = new User(userObject);
 
+    await user.save();
+
     userToken = user.generateAuthToken();
 
   });
 
-  afterAll(async () => await server.close());
+  afterAll(async () => {
+    await User.deleteMany();
+    await server.close();
+  });
 
   describe("GET", () => {
 

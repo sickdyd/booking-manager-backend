@@ -2,9 +2,6 @@
 const request = require("supertest");
 const { User } = require("../models/user");
 const { Settings } = require("../models/settings");
-const bcrypt = require("bcrypt");
-const moment = require("moment");
-const mongoose = require("mongoose");
 const settings = require("../test-data/settings.json");
 
 describe("api/settings", () => {
@@ -12,38 +9,37 @@ describe("api/settings", () => {
   let server;
   let adminToken;
   let userToken;
-  let userId;
 
   beforeAll(async () => {
 
     server = require("../index");
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash("testing123", salt);
+    const users = await User.insertMany([
+      {
+        name: "admin",
+        surname: "admin",
+        email: "admin@test.it",
+        password: "testing123",
+        admin: true,
+        disabled: false,
+      },
+      {
+        name: "user",
+        surname: "user",
+        email: "user@test.it",
+        password: "testing123",
+        admin: false,
+        disabled: false,
+      }
+    ]);
 
-    const adminUser = {
-      name: "test",
-      surname: "test",
-      email: "test@test.it",
-      password: password,
-      admin: true,
-      disabled: false,
-    }
-
-    let user = new User(adminUser);
-    adminToken = user.generateAuthToken();
-
-    adminUser.admin = false;
-    user = new User(adminUser);
-    userToken = user.generateAuthToken();
+    adminToken = users[0].generateAuthToken();
+    userToken = users[1].generateAuthToken();
 
   });
 
   afterAll(async () => {
     await server.close();
-  });
-
-  afterEach(async () => {
     await Settings.deleteMany();
     await User.deleteMany();
   });

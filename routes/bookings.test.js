@@ -43,6 +43,8 @@ describe("api/bookings", () => {
 
     adminUser.admin = false;
 
+    await user.save();
+
     user = new User(adminUser);
 
     userToken = user.generateAuthToken();
