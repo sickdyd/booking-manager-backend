@@ -51,33 +51,19 @@ router.post("/", [authorize, admin, validate(validateUser)], async (req, res) =>
   return res.status(200).send(user);
 });
 
-router.put("/:id", [authorize, admin, validateObjectId, validate(validateUser)], async (req, res) => {
-
-  const user = await User.findById(req.params.id);
-  if (!user) return errorHandler(res, "USER_NOT_FOUND");
-
-  const salt = await bcrypt.genSalt(10);
-  req.body.password = await bcrypt.hash(req.body.password, salt);
-
-  user.update(req.body);
-  await user.save();
-
-  return res.status(200).send(_.pick(user, userReturnedFields));
-});
-
 router.patch("/:id", [authorize, validateObjectId], async (req, res) => {
 
   const user = await User.findById(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
+  if ((!req.user.admin && !hasOnlyProperty(req.body, "password")) ||
+    (!req.user.admin && (req.params.id !== req.user._id))) {
+      return errorHandler(res, "UNAUTHORIZED");
+    }
+
   // The patch can be done for the password too, so ignore points if changing password
   if ((user.points !== req.body.verifyPoints) && (!hasOnlyProperty(req.body, "password"))) {
     return errorHandler(res, "USER_POINTS_CHANGED");
-  }
-
-  if ((!req.user.admin && !hasOnlyProperty(req.body, "password")) ||
-      (!req.user.admin && (req.params.id !== req.user._id))) {
-    return errorHandler(res, "UNAUTHORIZED");
   }
 
   const tempUser = _.pick(user, userValidationFields);
@@ -104,7 +90,7 @@ router.delete("/:id", [authorize, admin, validateObjectId], async (req, res) => 
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return errorHandler(res, "USER_NOT_FOUND");
 
-  const bookings = await Booking.deleteMany({ user: req.params.id });
+  await Booking.deleteMany({ user: req.params.id });
 
   return res.status(200).send(_.pick(user, userReturnedFields));
 });
@@ -116,7 +102,6 @@ router.get("/:id/bookings", [authorize, validateObjectId], async (req, res) => {
   }
 
   let bookings = await Booking.find({ user: req.params.id }).sort("unix");
-  if (!bookings) return res.status(204).send([]);
 
   res.status(200).send(bookings);
 });

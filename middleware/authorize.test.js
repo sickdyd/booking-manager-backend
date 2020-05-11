@@ -30,7 +30,7 @@ describe("middleware/authorize.js", () => {
     const res = await request(server)
       .get("/api/users")
       .set("x-auth-token", "invalid");
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(401);
     server.close();
   });
 });
