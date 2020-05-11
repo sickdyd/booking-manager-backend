@@ -5,9 +5,9 @@ const bcrypt = require("bcrypt");
 module.exports = async () => {
 
   const admin = {
-    name: "Name",
-    surname: "Surname",
-    email: "test@gmail.com",
+    name: "Admin",
+    surname: "Admin",
+    email: "admin@gmail.com",
     password: "testing123",
     admin: true,
     disabled: false
