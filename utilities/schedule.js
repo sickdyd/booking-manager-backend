@@ -156,9 +156,7 @@ const generateSchedule = async (userId, admin) => {
   const schedule = [];
 
   let start = moment().startOf("week").tz("Asia/Tokyo");
-
   let end = moment.unix(lastBookableDay).tz("Asia/Tokyo");
-  console.log(moment.unix(1590019200));
 
   // Extend the visible schedule to the last booking
   if (admin) {
@@ -170,7 +168,7 @@ const generateSchedule = async (userId, admin) => {
   }
 
   const dur = moment.duration({ from: start, to: end });
-  const totalDays = Math.ceil(dur.asDays());
+  const totalDays = Math.floor(dur.asDays());
 
   for (let i = 0; i <= totalDays; i++) {
 

@@ -37,6 +37,7 @@ const consoleFormat = winston.format.printf(function(info) {
 // If not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 // 
+
 // if (config.get("env") === "development") {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(

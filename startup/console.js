@@ -1,6 +1,7 @@
 "use strict";
 const morgan = require("morgan");
+const config = require("config");
 
 module.exports = app => {
-  if (app.get("env") === "development") app.use(morgan("tiny"));
+  if (config.get("env") === "development") app.use(morgan("tiny"));
 }
